@@ -1,10 +1,4 @@
-import java.util.concurrent.CompletableFuture;
-
-
-
-
-
-public class FirstExercise {
+public class AsyncSync {
 
     public static void  task1(){
         System.out.println("Task1 Running");

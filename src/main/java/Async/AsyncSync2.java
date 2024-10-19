@@ -1,3 +1,5 @@
+package Async;
+
 import java.util.concurrent.CompletableFuture;
 
 public class AsyncSync2 {

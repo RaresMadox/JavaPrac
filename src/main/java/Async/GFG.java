@@ -1,5 +1,4 @@
-//Java program to demonstrate the use of the CompletableFuture
-import java.io.*;
+package Async;//Java program to demonstrate the use of the CompletableFuture
 import java.util.concurrent.CompletableFuture;
 
 public class GFG {

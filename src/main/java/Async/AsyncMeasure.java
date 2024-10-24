@@ -47,6 +47,8 @@ public class AsyncMeasure {
             }
         });
 
+        // Rares
+
         CompletableFuture<String> future3 = CompletableFuture.supplyAsync(() -> {
             try {
                 return fetchData("Source 3");

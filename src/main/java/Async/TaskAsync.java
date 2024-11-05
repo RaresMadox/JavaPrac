@@ -127,6 +127,67 @@ public class TaskAsync {
 
         taskDependecies();
     }
+//    Key Points to Improve:
+//    Avoid Blocking Calls:
+//
+//    The get() calls on getIDs and fetchContent are blocking, which goes against the non-blocking nature of CompletableFuture. Instead, you should chain these futures using thenCombine() or thenCompose() to avoid blocking.
+//    Handling Result Mapping:
+//
+//    Instead of using indexOf within a loop, which is inefficient, iterate over the results directly to populate the map.
+//    Use of Static Variables (e.g., UserID, userDetailes):
+//
+//    The code references variables UserID and userDetailes without initializing them here. Assuming they’re defined elsewhere as static variables, it’s best to initialize and reference them directly in the method for clarity.
+//    Streamlining Code for Efficiency:
+//
+//    Simplifying the logic with thenCombine() can lead to more readable, concise, and non-blocking code.
 
+    public class AsyncDependency {
 
+        // Assuming these lists are initialized somewhere as part of the exercise
+        private static final List<Integer> UserID = List.of(1, 2, 3);   // Sample IDs
+        private static final List<String> userDetails = List.of("Content A", "Content B", "Content C");   // Sample details
+
+        public static void taskDependencies() throws ExecutionException, InterruptedException {
+            // First async task: fetch IDs
+            CompletableFuture<List<Integer>> getIDs = CompletableFuture.supplyAsync(() -> new ArrayList<>(UserID));
+
+            // Second async task: fetch details
+            CompletableFuture<List<String>> fetchContent = CompletableFuture.supplyAsync(() -> new ArrayList<>(userDetails));
+
+            // Combine both results non-blockingly
+            CompletableFuture<Map<Integer, String>> combinedResult = getIDs.thenCombine(fetchContent, (ids, content) -> {
+                Map<Integer, String> results = new HashMap<>();
+                for (int i = 0; i < Math.min(ids.size(), content.size()); i++) {
+                    results.put(ids.get(i), content.get(i));
+                    System.out.println("Sending to " + ids.get(i) + " content: " + content.get(i));
+                }
+                return results;
+            });
+
+            // Retrieve and display the final combined result
+            Map<Integer, String> result = combinedResult.get();  // Blocking here only for the final result
+            System.out.println("Combined Result: " + result);
+        }
+
+        public static void main(String[] args) {
+            try {
+                taskDependencies();
+            } catch (ExecutionException | InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+   }
+//    Explanation of Improvements:
+//    Non-Blocking Combination Using thenCombine():
+//
+//    Replaced CompletableFuture.allOf() with thenCombine() to combine getIDs and fetchContent without needing blocking calls (get()) for intermediate results.
+//    Mapping Results Efficiently:
+//
+//    Replaced for loop with index-based iteration using Math.min(ids.size(), content.size()) to handle cases where ids and content lists may have different lengths, ensuring no IndexOutOfBoundsException.
+//    Using List.of() for Static Variables:
+//
+//    Sample values are initialized using List.of() for clarity, assuming these are set up globally in your application.
+//    Blocking Only on the Final Result:
+//
+//    Instead of using get() in intermediate steps, the only blocking call is combinedResult.get(), ensuring a non-blocking execution of the asynchronous chain up until the final result retrieval.
 }
